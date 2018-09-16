@@ -65,7 +65,9 @@ public final class ClusterResourceTest {
     final MockObjects mocks = initMocks();
 
     ClusterResource clusterResource = new ClusterResource(mocks.context, Executors.newFixedThreadPool(2));
-    Response response = clusterResource.addOrUpdateCluster(mocks.uriInfo, Optional.of(SEED_HOST));
+    Response response =
+        clusterResource.addOrUpdateCluster(
+            mocks.uriInfo, Optional.of(SEED_HOST), Optional.of(Cluster.DEFAULT_JMX_PORT));
 
     assertEquals(HttpStatus.CREATED_201, response.getStatus());
     assertEquals(1, mocks.context.storage.getClusters().size());
@@ -87,7 +89,9 @@ public final class ClusterResourceTest {
     mocks.context.storage.addCluster(cluster);
 
     ClusterResource clusterResource = new ClusterResource(mocks.context, Executors.newFixedThreadPool(2));
-    Response response = clusterResource.addOrUpdateCluster(mocks.uriInfo, Optional.of(SEED_HOST));
+    Response response =
+        clusterResource.addOrUpdateCluster(
+            mocks.uriInfo, Optional.of(SEED_HOST), Optional.of(Cluster.DEFAULT_JMX_PORT));
 
     assertEquals(HttpStatus.NO_CONTENT_204, response.getStatus());
     assertTrue(response.getLocation().toString().endsWith("/cluster/" + cluster.getName()));
@@ -110,7 +114,12 @@ public final class ClusterResourceTest {
     mocks.context.storage.addCluster(cluster);
 
     ClusterResource clusterResource = new ClusterResource(mocks.context, Executors.newFixedThreadPool(2));
-    Response response = clusterResource.addOrUpdateCluster(mocks.uriInfo, CLUSTER_NAME, Optional.of(SEED_HOST));
+    Response response =
+        clusterResource.addOrUpdateCluster(
+            mocks.uriInfo,
+            CLUSTER_NAME,
+            Optional.of(SEED_HOST),
+            Optional.of(Cluster.DEFAULT_JMX_PORT));
 
     assertEquals(HttpStatus.NO_CONTENT_204, response.getStatus());
     assertTrue(response.getLocation().toString().endsWith("/cluster/" + cluster.getName()));
@@ -152,10 +161,13 @@ public final class ClusterResourceTest {
     final MockObjects mocks = initMocks();
 
     ClusterResource clusterResource = new ClusterResource(mocks.context, Executors.newFixedThreadPool(2));
-    clusterResource.addOrUpdateCluster(mocks.uriInfo, Optional.of(SEED_HOST));
+    clusterResource.addOrUpdateCluster(
+        mocks.uriInfo, Optional.of(SEED_HOST), Optional.of(Cluster.DEFAULT_JMX_PORT));
     doReturn(Arrays.asList(SEED_HOST + 1)).when(mocks.jmxProxy).getLiveNodes();
 
-    Response response = clusterResource.addOrUpdateCluster(mocks.uriInfo, Optional.of(SEED_HOST + 1));
+    Response response =
+        clusterResource.addOrUpdateCluster(
+            mocks.uriInfo, Optional.of(SEED_HOST + 1), Optional.of(Cluster.DEFAULT_JMX_PORT));
 
     assertEquals(HttpStatus.OK_200, response.getStatus());
     assertTrue(response.getLocation().toString().endsWith("/cluster/" + CLUSTER_NAME));
@@ -165,7 +177,12 @@ public final class ClusterResourceTest {
     assertEquals(1, cluster.getSeedHosts().size());
     assertEquals(SEED_HOST + 1, cluster.getSeedHosts().iterator().next());
 
-    response = clusterResource.addOrUpdateCluster(mocks.uriInfo, CLUSTER_NAME, Optional.of(SEED_HOST + 1));
+    response =
+        clusterResource.addOrUpdateCluster(
+            mocks.uriInfo,
+            CLUSTER_NAME,
+            Optional.of(SEED_HOST + 1),
+            Optional.of(Cluster.DEFAULT_JMX_PORT));
     assertEquals(HttpStatus.NO_CONTENT_204, response.getStatus());
     assertTrue(response.getLocation().toString().endsWith("/cluster/" + cluster.getName()));
   }
@@ -175,10 +192,16 @@ public final class ClusterResourceTest {
     final MockObjects mocks = initMocks();
 
     ClusterResource clusterResource = new ClusterResource(mocks.context, Executors.newFixedThreadPool(2));
-    clusterResource.addOrUpdateCluster(mocks.uriInfo, Optional.of(SEED_HOST));
+    clusterResource.addOrUpdateCluster(
+        mocks.uriInfo, Optional.of(SEED_HOST), Optional.of(Cluster.DEFAULT_JMX_PORT));
     doReturn(Arrays.asList(SEED_HOST + 1)).when(mocks.jmxProxy).getLiveNodes();
 
-    Response response = clusterResource.addOrUpdateCluster(mocks.uriInfo, CLUSTER_NAME, Optional.of(SEED_HOST + 1));
+    Response response =
+        clusterResource.addOrUpdateCluster(
+            mocks.uriInfo,
+            CLUSTER_NAME,
+            Optional.of(SEED_HOST + 1),
+            Optional.of(Cluster.DEFAULT_JMX_PORT));
 
     assertEquals(HttpStatus.OK_200, response.getStatus());
     assertTrue(response.getLocation().toString().endsWith("/cluster/" + CLUSTER_NAME));
@@ -188,7 +211,12 @@ public final class ClusterResourceTest {
     assertEquals(1, cluster.getSeedHosts().size());
     assertEquals(SEED_HOST + 1, cluster.getSeedHosts().iterator().next());
 
-    response = clusterResource.addOrUpdateCluster(mocks.uriInfo, CLUSTER_NAME, Optional.of(SEED_HOST + 1));
+    response =
+        clusterResource.addOrUpdateCluster(
+            mocks.uriInfo,
+            CLUSTER_NAME,
+            Optional.of(SEED_HOST + 1),
+            Optional.of(Cluster.DEFAULT_JMX_PORT));
     assertEquals(HttpStatus.NO_CONTENT_204, response.getStatus());
     assertTrue(response.getLocation().toString().endsWith("/cluster/" + cluster.getName()));
   }
@@ -211,7 +239,9 @@ public final class ClusterResourceTest {
         .build();
 
     ClusterResource clusterResource = new ClusterResource(mocks.context, Executors.newFixedThreadPool(2));
-    Response response = clusterResource.addOrUpdateCluster(mocks.uriInfo, Optional.of(SEED_HOST));
+    Response response =
+        clusterResource.addOrUpdateCluster(
+            mocks.uriInfo, Optional.of(SEED_HOST), Optional.of(Cluster.DEFAULT_JMX_PORT));
 
     assertEquals(HttpStatus.CREATED_201, response.getStatus());
     assertEquals(1, mocks.context.storage.getAllRepairSchedules().size());

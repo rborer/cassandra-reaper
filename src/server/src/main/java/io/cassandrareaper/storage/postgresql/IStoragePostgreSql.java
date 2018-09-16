@@ -48,11 +48,13 @@ public interface IStoragePostgreSql {
 
   // Cluster
   //
-  String SQL_CLUSTER_ALL_FIELDS = "name, partitioner, seed_hosts";
+  String SQL_CLUSTER_ALL_FIELDS = "name, partitioner, seed_hosts, jmx_port";
   String SQL_GET_ALL_CLUSTERS = "SELECT " + SQL_CLUSTER_ALL_FIELDS + " FROM cluster";
   String SQL_GET_CLUSTER = "SELECT " + SQL_CLUSTER_ALL_FIELDS + " FROM cluster WHERE name = :name";
-  String SQL_INSERT_CLUSTER = "INSERT INTO cluster (" + SQL_CLUSTER_ALL_FIELDS
-      + ") VALUES (:name, :partitioner, :seedHosts)";
+  String SQL_INSERT_CLUSTER =
+      "INSERT INTO cluster ("
+          + SQL_CLUSTER_ALL_FIELDS
+          + ") VALUES (:name, :partitioner, :seedHosts, :jmxPort)";
   String SQL_UPDATE_CLUSTER = "UPDATE cluster SET partitioner = :partitioner, "
       + "seed_hosts = :seedHosts WHERE name = :name";
   String SQL_DELETE_CLUSTER = "DELETE FROM cluster WHERE name = :name";

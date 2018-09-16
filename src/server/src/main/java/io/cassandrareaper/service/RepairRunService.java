@@ -155,7 +155,7 @@ public final class RepairRunService {
                   .map(
                       host ->
                           Node.builder()
-                              .withClusterName(targetCluster.getName())
+                              .withCluster(context.storage.getCluster(targetCluster.getName()).get())
                               .withHostname(host)
                               .build())
                   .collect(Collectors.toList()),

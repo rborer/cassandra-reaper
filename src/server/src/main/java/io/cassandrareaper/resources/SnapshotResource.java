@@ -48,9 +48,10 @@ public final class SnapshotResource {
   private static final Logger LOG = LoggerFactory.getLogger(SnapshotResource.class);
 
   private final SnapshotManager snapshotManager;
+  private final AppContext context;
 
   public SnapshotResource(AppContext context, Environment environment) {
-
+    this.context = context;
     snapshotManager = SnapshotManager.create(
         context,
         environment.lifecycle().executorService("SnapshotManager").minThreads(5).maxThreads(5).build());
@@ -72,7 +73,11 @@ public final class SnapshotResource {
       @QueryParam("snapshot_name") Optional<String> snapshotName) {
 
     try {
-      Node node = Node.builder().withClusterName(clusterName).withHostname(host.get()).build();
+      Node node =
+          Node.builder()
+              .withCluster(context.storage.getCluster(clusterName).get())
+              .withHostname(host.get())
+              .build();
       if (host.isPresent()) {
         if (keyspace.isPresent()) {
           snapshotManager.takeSnapshot(
@@ -146,8 +151,12 @@ public final class SnapshotResource {
       @PathParam("host") String host) {
 
     try {
-      Map<String, List<Snapshot>> snapshots = snapshotManager
-          .listSnapshotsGroupedByName(Node.builder().withClusterName(clusterName).withHostname(host).build());
+      Map<String, List<Snapshot>> snapshots =
+          snapshotManager.listSnapshotsGroupedByName(
+              Node.builder()
+                  .withCluster(context.storage.getCluster(clusterName).get())
+                  .withHostname(host)
+                  .build());
 
       return Response.ok().entity(snapshots).build();
     } catch (ReaperException e) {
@@ -186,7 +195,11 @@ public final class SnapshotResource {
 
     try {
       if (host.isPresent() && snapshotName.isPresent()) {
-        Node node = Node.builder().withClusterName(clusterName).withHostname(host.get()).build();
+        Node node =
+            Node.builder()
+                .withCluster(context.storage.getCluster(clusterName).get())
+                .withHostname(host.get())
+                .build();
         // check that the snapshot still exists
         // even though this rest endpoint is not synchronised, a 404 response is helpful where possible
         List<Snapshot> snapshots = snapshotManager.listSnapshotsGroupedByName(node).get(snapshotName.get());

@@ -37,6 +37,10 @@ public final class ClusterMapper implements ResultSetMapper<Cluster> {
       Object[] ol = (Object[]) obj;
       seedHosts = Arrays.copyOf(ol, ol.length, String[].class);
     }
-    return new Cluster(rs.getString("name"), rs.getString("partitioner"), Sets.newHashSet(seedHosts));
+    return new Cluster(
+        rs.getString("name"),
+        rs.getString("partitioner"),
+        Sets.newHashSet(seedHosts),
+        rs.getInt("jmx_port"));
   }
 }

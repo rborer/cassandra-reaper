@@ -98,8 +98,6 @@ final class JmxProxyImpl implements JmxProxy {
 
   private static final Logger LOG = LoggerFactory.getLogger(JmxProxy.class);
 
-  private static final int JMX_PORT = 7199;
-
   private static final String VALUE_ATTRIBUTE = "Value";
   private static final String FAILED_TO_CONNECT_TO_USING_JMX = "Failed to connect to {} using JMX";
   private static final String ERROR_GETTING_ATTR_JMX = "Error getting attribute from JMX";
@@ -166,13 +164,13 @@ final class JmxProxyImpl implements JmxProxy {
     final HostAndPort hostAndPort = HostAndPort.fromString(host);
 
     return connect(
-          hostAndPort.getHostText(),
-          hostAndPort.getPortOrDefault(JMX_PORT),
-          username,
-          password,
-          addressTranslator,
-          connectionTimeout,
-          metricRegistry);
+        hostAndPort.getHostText(),
+        hostAndPort.getPortOrDefault(Cluster.DEFAULT_JMX_PORT),
+        username,
+        password,
+        addressTranslator,
+        connectionTimeout,
+        metricRegistry);
   }
 
   /**

@@ -237,9 +237,11 @@ public final class CassandraStorage implements IStorage, IDistributedStorage {
 
   private void prepareStatements() {
     final String timeUdf = 0 < VersionNumber.parse("2.2").compareTo(version) ? "dateOf" : "toTimestamp";
-    insertClusterPrepStmt = session
-        .prepare("INSERT INTO cluster(name, partitioner, seed_hosts) values(?, ?, ?)")
-        .setConsistencyLevel(ConsistencyLevel.QUORUM);
+    insertClusterPrepStmt =
+        session
+            .prepare(
+                "INSERT INTO cluster(name, partitioner, seed_hosts, jmx_port) values(?, ?, ?, ?)")
+            .setConsistencyLevel(ConsistencyLevel.QUORUM);
     getClusterPrepStmt = session
         .prepare("SELECT * FROM cluster WHERE name = ?")
         .setConsistencyLevel(ConsistencyLevel.QUORUM)
@@ -395,7 +397,10 @@ public final class CassandraStorage implements IStorage, IDistributedStorage {
     for (Row cluster : clusterResults) {
       clusters.add(
           new Cluster(
-              cluster.getString("name"), cluster.getString("partitioner"), cluster.getSet("seed_hosts", String.class)));
+              cluster.getString("name"),
+              cluster.getString("partitioner"),
+              cluster.getSet("seed_hosts", String.class),
+              cluster.getInt("jmx_port")));
     }
 
     return clusters;
@@ -403,7 +408,12 @@ public final class CassandraStorage implements IStorage, IDistributedStorage {
 
   @Override
   public boolean addCluster(Cluster cluster) {
-    session.execute(insertClusterPrepStmt.bind(cluster.getName(), cluster.getPartitioner(), cluster.getSeedHosts()));
+    session.execute(
+        insertClusterPrepStmt.bind(
+            cluster.getName(),
+            cluster.getPartitioner(),
+            cluster.getSeedHosts(),
+            cluster.getJmxPort()));
     return true;
   }
 
@@ -418,7 +428,11 @@ public final class CassandraStorage implements IStorage, IDistributedStorage {
 
     return row != null
         ? Optional.ofNullable(
-            new Cluster(row.getString("name"), row.getString("partitioner"), row.getSet("seed_hosts", String.class)))
+            new Cluster(
+                row.getString("name"),
+                row.getString("partitioner"),
+                row.getSet("seed_hosts", String.class),
+                row.getInt("jmx_port")))
         : Optional.empty();
   }
 

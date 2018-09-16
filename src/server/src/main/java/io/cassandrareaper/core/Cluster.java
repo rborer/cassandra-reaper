@@ -20,14 +20,21 @@ import com.google.common.base.Preconditions;
 
 public final class Cluster {
 
+  public static final int DEFAULT_JMX_PORT = 7199;
   private final String name;
   private final String partitioner; // Full name of the partitioner class
   private final Set<String> seedHosts;
+  private final int jmxPort;
 
   public Cluster(String name, String partitioner, Set<String> seedHosts) {
+    this(name, partitioner, seedHosts, DEFAULT_JMX_PORT);
+  }
+
+  public Cluster(String name, String partitioner, Set<String> seedHosts, int jmxPort) {
     this.name = toSymbolicName(name);
     this.partitioner = partitioner;
     this.seedHosts = seedHosts;
+    this.jmxPort = jmxPort == 0 ? DEFAULT_JMX_PORT : jmxPort;
   }
 
   public static String toSymbolicName(String name) {
@@ -45,5 +52,9 @@ public final class Cluster {
 
   public Set<String> getSeedHosts() {
     return seedHosts;
+  }
+
+  public int getJmxPort() {
+    return jmxPort;
   }
 }
